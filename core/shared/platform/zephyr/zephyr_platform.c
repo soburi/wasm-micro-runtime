@@ -33,12 +33,14 @@ disable_mpu_rasr_xn(void)
 #endif /* end of CONFIG_ARM_MPU */
 #endif
 
+#ifdef CONFIG_STDOUT_CONSOLE
 static int
 _stdout_hook_iwasm(int c)
 {
     printk("%c", (char)c);
     return 1;
 }
+#endif
 
 int
 os_thread_sys_init();
@@ -49,9 +51,11 @@ os_thread_sys_destroy();
 int
 bh_platform_init()
 {
+#ifdef CONFIG_STDOUT_CONSOLE
     extern void __stdout_hook_install(int (*hook)(int));
     /* Enable printf() in Zephyr */
     __stdout_hook_install(_stdout_hook_iwasm);
+#endif
 
 #if WASM_ENABLE_AOT != 0
 #ifdef CONFIG_ARM_MPU
